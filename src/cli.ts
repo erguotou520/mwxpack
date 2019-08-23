@@ -1,6 +1,7 @@
 import minimist, { ParsedArgs } from 'minimist'
 import path from 'path'
 import { existsSync } from 'fs'
+import chalk from 'chalk'
 import { error, warn } from './utils'
 import generateConfig from './webpack'
 import { validate, FileConfig } from './config'
@@ -70,20 +71,34 @@ export async function loadConfiguration (args: ParsedArgs, service: string): Pro
   return generateConfig(config, service === 'build' ? 'production' : 'development')
 }
 
-function webpackHandler (err: Error, stats: Stats) {
+function logStats (stats: Stats): void {
+  process.stdout.write(stats.toString({
+    colors: true,
+    modules: false,
+    children: false,
+    chunks: false,
+    chunkModules: false,
+    entrypoints: false
+  }) + '\n\n')
+}
+
+function webpackHandler (err: Error, stats: any) {
   if (err) {
     throw err
   }
+  if (Array.isArray(stats.stats)) {
+    stats.stats.forEach((_stats: Stats) => {
+      logStats(<Stats>_stats)
+    })
+  } else {
+    logStats(stats.stats)
+  }
+
   if (stats.hasErrors()) {
     error('构建发生错误')
     process.exit(-1)
   }
-  console.log(stats.toString({
-    colors: true,
-    chunks: false,
-    children: false,
-    modules: false
-  }))
+  console.log(chalk.cyan('  Build complete.\n'))
 }
 
 export default async function run (_args: string[]) {

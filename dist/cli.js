@@ -41,6 +41,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var minimist_1 = __importDefault(require("minimist"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
+var chalk_1 = __importDefault(require("chalk"));
 var utils_1 = require("./utils");
 var webpack_1 = __importDefault(require("./webpack"));
 var config_1 = require("./config");
@@ -118,20 +119,33 @@ function loadConfiguration(args, service) {
     });
 }
 exports.loadConfiguration = loadConfiguration;
+function logStats(stats) {
+    process.stdout.write(stats.toString({
+        colors: true,
+        modules: false,
+        children: false,
+        chunks: false,
+        chunkModules: false,
+        entrypoints: false
+    }) + '\n\n');
+}
 function webpackHandler(err, stats) {
     if (err) {
         throw err;
+    }
+    if (Array.isArray(stats.stats)) {
+        stats.stats.forEach(function (_stats) {
+            logStats(_stats);
+        });
+    }
+    else {
+        logStats(stats.stats);
     }
     if (stats.hasErrors()) {
         utils_1.error('构建发生错误');
         process.exit(-1);
     }
-    console.log(stats.toString({
-        colors: true,
-        chunks: false,
-        children: false,
-        modules: false
-    }));
+    console.log(chalk_1.default.cyan('  Build complete.\n'));
 }
 function run(_args) {
     return __awaiter(this, void 0, void 0, function () {

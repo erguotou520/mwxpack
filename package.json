@@ -1,8 +1,8 @@
 {
   "name": "mwxpack",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "webpack configuration for weixin miapp",
-  "main": "index.js",
+  "main": "bin/mwxpack.js",
   "author": "erguotou525@gmail.com",
   "license": "MIT",
   "private": false,
