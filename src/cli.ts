@@ -72,13 +72,18 @@ export async function loadConfiguration (args: ParsedArgs, service: string): Pro
 
 function webpackHandler (err: Error, stats: Stats) {
   if (err) {
-    console.error(err)
-    process.exit(-1)
+    throw err
   }
   if (stats.hasErrors()) {
     error('构建发生错误')
     process.exit(-1)
   }
+  console.log(stats.toString({
+    colors: true,
+    chunks: false,
+    children: false,
+    modules: false
+  }))
 }
 
 export default async function run (_args: string[]) {
@@ -87,7 +92,6 @@ export default async function run (_args: string[]) {
   if (service === 'inspect') {
     return console.log(webpackConfiguration)
   }
-  debugger
   const compiler: MultiCompiler = webpack(webpackConfiguration)
   if (service === 'build') {
     compiler.run(webpackHandler)

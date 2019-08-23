@@ -11,7 +11,7 @@ module.exports = {
   // 打包后的目录位置
   outputDir: './dist',
   // 每个项目需要复制的目录
-  copyDirs: 'public',
+  copyDirs: ['public'],
   // 项目列表，相对于srcDir
   projects: [
     'projectA',

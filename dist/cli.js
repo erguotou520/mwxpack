@@ -120,13 +120,18 @@ function loadConfiguration(args, service) {
 exports.loadConfiguration = loadConfiguration;
 function webpackHandler(err, stats) {
     if (err) {
-        console.error(err);
-        process.exit(-1);
+        throw err;
     }
     if (stats.hasErrors()) {
         utils_1.error('构建发生错误');
         process.exit(-1);
     }
+    console.log(stats.toString({
+        colors: true,
+        chunks: false,
+        children: false,
+        modules: false
+    }));
 }
 function run(_args) {
     return __awaiter(this, void 0, void 0, function () {
@@ -141,7 +146,6 @@ function run(_args) {
                     if (service === 'inspect') {
                         return [2 /*return*/, console.log(webpackConfiguration)];
                     }
-                    debugger;
                     compiler = webpack_2.default(webpackConfiguration);
                     if (service === 'build') {
                         compiler.run(webpackHandler);

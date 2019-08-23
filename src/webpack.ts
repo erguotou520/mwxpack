@@ -79,14 +79,14 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
       mode: mode,
       context: currentDir,
       devtool: false,
-      node: false,
-      target: 'web',
       entry: {
         app: path.resolve(options.srcDir, project, 'app.js')
       },
       output: {
         path: path.resolve(currentDir, `${options.outpuDir}${isSingleProject ? '' : `/${project}`}`),
-        filename: '[name].js'
+        filename: '[name].js',
+        publicPath: '/',
+        globalObject: 'wx',
       },
       resolve: {
         alias: {
@@ -171,19 +171,19 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
         new DefinePlugin({
           NODE_ENV: mode === 'production' ? '"production"' : '"development"'
         }),
-        // new CaseSensitivePathsPlugin(),
-        // new FriendlyErrorsWebpackPlugin(),
-        // new ProgressPlugin(),
-        // new CopyWebpackPlugin(copyDirs.map(dir => {
-        //   return {
-        //     from: path.resolve(currentDir, isSingleProject ? '' : project, dir),
-        //     to: path.resolve(options.outpuDir, isSingleProject ? '' : project, dir),
-        //     toType: 'dir',
-        //     ignore: [
-        //       '.DS_Store'
-        //     ]
-        //   }
-        // }))
+        new CaseSensitivePathsPlugin(),
+        new FriendlyErrorsWebpackPlugin(),
+        new ProgressPlugin(),
+        new CopyWebpackPlugin(copyDirs.map(dir => {
+          return {
+            from: path.resolve(options.srcDir, isSingleProject ? '' : project, dir),
+            to: path.resolve(options.outpuDir, isSingleProject ? '' : project),
+            toType: 'dir',
+            ignore: [
+              '.DS_Store'
+            ]
+          }
+        }))
       ]
     }
     if (process.env.npm_config_report && ret.plugins) {

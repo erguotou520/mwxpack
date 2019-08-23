@@ -5,6 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var webpack_1 = require("webpack");
+var case_sensitive_paths_webpack_plugin_1 = __importDefault(require("case-sensitive-paths-webpack-plugin"));
+var friendly_errors_webpack_plugin_1 = __importDefault(require("friendly-errors-webpack-plugin"));
+var copy_webpack_plugin_1 = __importDefault(require("copy-webpack-plugin"));
 var webpack_bundle_analyzer_1 = require("webpack-bundle-analyzer");
 var webpack_merge_1 = __importDefault(require("webpack-merge"));
 var currentDir = process.cwd();
@@ -75,14 +78,14 @@ function generateConfig(config, mode) {
             mode: mode,
             context: currentDir,
             devtool: false,
-            node: false,
-            target: 'web',
             entry: {
                 app: path_1.default.resolve(options.srcDir, project, 'app.js')
             },
             output: {
                 path: path_1.default.resolve(currentDir, "" + options.outpuDir + (isSingleProject ? '' : "/" + project)),
-                filename: '[name].js'
+                filename: '[name].js',
+                publicPath: '/',
+                globalObject: 'wx',
             },
             resolve: {
                 alias: {
@@ -167,6 +170,19 @@ function generateConfig(config, mode) {
                 new webpack_1.DefinePlugin({
                     NODE_ENV: mode === 'production' ? '"production"' : '"development"'
                 }),
+                new case_sensitive_paths_webpack_plugin_1.default(),
+                new friendly_errors_webpack_plugin_1.default(),
+                new webpack_1.ProgressPlugin(),
+                new copy_webpack_plugin_1.default(copyDirs.map(function (dir) {
+                    return {
+                        from: path_1.default.resolve(options.srcDir, isSingleProject ? '' : project, dir),
+                        to: path_1.default.resolve(options.outpuDir, isSingleProject ? '' : project),
+                        toType: 'dir',
+                        ignore: [
+                            '.DS_Store'
+                        ]
+                    };
+                }))
             ]
         };
         if (process.env.npm_config_report && ret.plugins) {
