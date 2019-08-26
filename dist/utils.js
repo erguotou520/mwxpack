@@ -12,4 +12,3 @@ function warn(str) {
     console.log(chalk_1.default.yellow(str));
 }
 exports.warn = warn;
-//# sourceMappingURL=utils.js.map

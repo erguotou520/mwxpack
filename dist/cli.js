@@ -129,7 +129,8 @@ function logStats(stats) {
         entrypoints: false
     }) + '\n\n');
 }
-function webpackHandler(err, stats) {
+function webpackHandler(err, stats, isProd) {
+    if (isProd === void 0) { isProd = true; }
     if (err) {
         throw err;
     }
@@ -141,11 +142,16 @@ function webpackHandler(err, stats) {
     else {
         logStats(stats.stats);
     }
-    if (stats.hasErrors()) {
-        utils_1.error('构建发生错误');
-        process.exit(-1);
+    if (isProd) {
+        if (stats.hasErrors()) {
+            utils_1.error('构建发生错误');
+            process.exit(-1);
+        }
     }
     console.log(chalk_1.default.cyan('  Build complete.\n'));
+}
+function devWebpackHandler(err, stats) {
+    return webpackHandler(err, stats, false);
 }
 function run(_args) {
     return __awaiter(this, void 0, void 0, function () {
@@ -168,7 +174,7 @@ function run(_args) {
                         compiler.watch({
                             aggregateTimeout: 300,
                             poll: undefined
-                        }, webpackHandler);
+                        }, devWebpackHandler);
                     }
                     return [2 /*return*/];
             }
@@ -176,4 +182,3 @@ function run(_args) {
     });
 }
 exports.default = run;
-//# sourceMappingURL=cli.js.map

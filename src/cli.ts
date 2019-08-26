@@ -82,7 +82,7 @@ function logStats (stats: Stats): void {
   }) + '\n\n')
 }
 
-function webpackHandler (err: Error, stats: any) {
+function webpackHandler (err: Error, stats: any, isProd: boolean = true) {
   if (err) {
     throw err
   }
@@ -93,12 +93,17 @@ function webpackHandler (err: Error, stats: any) {
   } else {
     logStats(stats.stats)
   }
-
-  if (stats.hasErrors()) {
-    error('构建发生错误')
-    process.exit(-1)
+  if (isProd) {
+    if (stats.hasErrors()) {
+      error('构建发生错误')
+      process.exit(-1)
+    }
   }
   console.log(chalk.cyan('  Build complete.\n'))
+}
+
+function devWebpackHandler (err: Error, stats: any) {
+  return webpackHandler(err, stats, false)
 }
 
 export default async function run (_args: string[]) {
@@ -114,6 +119,6 @@ export default async function run (_args: string[]) {
     compiler.watch({
       aggregateTimeout: 300,
       poll: undefined
-    }, webpackHandler)
+    }, devWebpackHandler)
   }
 }

@@ -203,4 +203,3 @@ function generateConfig(config, mode) {
     });
 }
 exports.default = generateConfig;
-//# sourceMappingURL=webpack.js.map

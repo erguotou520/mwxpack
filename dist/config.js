@@ -72,4 +72,3 @@ function validate(config) {
     });
 }
 exports.validate = validate;
-//# sourceMappingURL=config.js.map
