@@ -93,11 +93,12 @@ function webpackHandler (err: Error, stats: any, isProd: boolean = true) {
   } else {
     logStats(stats.stats)
   }
-  if (isProd) {
-    if (stats.hasErrors()) {
+  if (stats.hasErrors()) {
+    if (isProd) {
       error('构建发生错误')
       process.exit(-1)
     }
+    return
   }
   console.log(chalk.cyan('  Build complete.\n'))
 }

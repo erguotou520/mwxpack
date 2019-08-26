@@ -142,11 +142,12 @@ function webpackHandler(err, stats, isProd) {
     else {
         logStats(stats.stats);
     }
-    if (isProd) {
-        if (stats.hasErrors()) {
+    if (stats.hasErrors()) {
+        if (isProd) {
             utils_1.error('构建发生错误');
             process.exit(-1);
         }
+        return;
     }
     console.log(chalk_1.default.cyan('  Build complete.\n'));
 }
