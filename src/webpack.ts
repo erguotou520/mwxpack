@@ -128,7 +128,6 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
                   extensions: [
                     '.js'
                   ],
-                  cache: true,
                   emitWarning: true,
                   emitError: false
                 }
@@ -141,7 +140,7 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
             include: [
               path.resolve(options.srcDir)
             ],
-            use: ['cache-loader', 'babel-loader']
+            use: ['babel-loader']
           },
           // json loader
           {

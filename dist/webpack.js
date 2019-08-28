@@ -127,7 +127,6 @@ function generateConfig(config, mode) {
                                     extensions: [
                                         '.js'
                                     ],
-                                    cache: true,
                                     emitWarning: true,
                                     emitError: false
                                 }
@@ -140,7 +139,7 @@ function generateConfig(config, mode) {
                         include: [
                             path_1.default.resolve(options.srcDir)
                         ],
-                        use: ['cache-loader', 'babel-loader']
+                        use: ['babel-loader']
                     },
                     // json loader
                     {
