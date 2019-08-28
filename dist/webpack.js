@@ -149,7 +149,7 @@ function generateConfig(config, mode) {
                         type: 'javascript/auto'
                     },
                     // images loader
-                    commonAssetLoader(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/, 'img'),
+                    // commonAssetLoader(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/, 'img'),
                     // media loader
                     commonAssetLoader(/\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/, 'media'),
                     // font loader
