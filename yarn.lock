@@ -3618,32 +3618,6 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mwxpack@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/mwxpack/-/mwxpack-0.0.2.tgz#b04bb0e8505bb84d38f5125ab0dfdb827694c7b3"
-  integrity sha512-jNtf/gwT/okRJdN6QJlJtlcSClFi5ezkxuY91c14gQ93Qq8FtcaeG7zxgsTtPDehSyeZcqaLFApXvGN9zRVkzA==
-  dependencies:
-    "@babel/core" "^7.5.5"
-    "@hapi/joi" "^15.1.1"
-    babel-loader "^8.0.6"
-    cache-loader "^4.1.0"
-    case-sensitive-paths-webpack-plugin "^2.2.0"
-    chalk "^2.4.2"
-    copy-webpack-plugin "^5.0.4"
-    css-loader "^3.2.0"
-    cssnano "^4.1.10"
-    eslint "^6.2.1"
-    eslint-loader "^2.2.1"
-    file-loader "^4.2.0"
-    friendly-errors-webpack-plugin "^1.7.0"
-    minimist "^1.2.0"
-    postcss-loader "^3.0.0"
-    url-loader "^2.1.0"
-    webpack "^4.39.2"
-    webpack-bundle-analyzer "^3.4.1"
-    webpack-dev-server "^3.8.0"
-    webpack-merge "^4.2.1"
-
 nan@^2.12.1:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"

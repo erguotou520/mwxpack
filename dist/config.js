@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var joi_1 = __importDefault(require("@hapi/joi"));
 var ConfigSchema = joi_1.default.object().keys({
+    mode: joi_1.default.string().allow(['development', 'production', 'none']),
     projects: [
         joi_1.default.string().required(),
         joi_1.default.array().items(joi_1.default.string().required()).required()

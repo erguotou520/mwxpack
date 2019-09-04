@@ -2,6 +2,7 @@ import Joi from '@hapi/joi'
 import { Configuration } from 'webpack'
 
 const ConfigSchema = Joi.object().keys({
+  mode: Joi.string().allow(['development', 'production', 'none']),
   projects: [
     Joi.string().required(),
     Joi.array().items(
@@ -21,6 +22,7 @@ const ConfigSchema = Joi.object().keys({
 })
 
 export interface FileConfig {
+  mode?: 'development' | 'production' | 'none',
   projects: string[] | string
   srcDir?: string
   outputDir?: string

@@ -1,6 +1,6 @@
 {
   "name": "mwxpack",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "webpack configuration for weixin miapp",
   "main": "bin/mwxpack.js",
   "author": "erguotou525@gmail.com",
@@ -47,7 +47,6 @@
     "file-loader": "^4.2.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "minimist": "^1.2.0",
-    "mwxpack": "^0.0.2",
     "postcss-loader": "^3.0.0",
     "url-loader": "^2.1.0",
     "webpack": "^4.39.2",

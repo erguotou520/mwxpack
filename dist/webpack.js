@@ -75,7 +75,7 @@ function generateConfig(config, mode) {
     var copyDirs = options.copyDirs ? (Array.isArray(options.copyDirs) ? options.copyDirs : [options.copyDirs]) : [];
     return projects.map(function (project) {
         var ret = {
-            mode: mode,
+            mode: options.mode || mode,
             context: currentDir,
             devtool: false,
             entry: {
