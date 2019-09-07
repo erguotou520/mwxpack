@@ -3,12 +3,9 @@ import { Configuration } from 'webpack'
 
 const ConfigSchema = Joi.object().keys({
   mode: Joi.string().allow(['development', 'production', 'none']),
-  projects: [
-    Joi.string().required(),
-    Joi.array().items(
-      Joi.string().required()
-    ).required()
-  ],
+  projects: Joi.array().items(
+    Joi.string().required()
+  ),
   srcDir: Joi.string(),
   outputDir: Joi.string(),
   copyDirs: [
@@ -23,7 +20,7 @@ const ConfigSchema = Joi.object().keys({
 
 export interface FileConfig {
   mode?: 'development' | 'production' | 'none',
-  projects: string[] | string
+  projects?: string[]
   srcDir?: string
   outputDir?: string
   copyDirs?: string[]

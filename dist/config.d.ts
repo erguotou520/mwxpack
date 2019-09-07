@@ -2,7 +2,7 @@
 import { Configuration } from 'webpack';
 export interface FileConfig {
     mode?: 'development' | 'production' | 'none';
-    projects: string[] | string;
+    projects?: string[];
     srcDir?: string;
     outputDir?: string;
     copyDirs?: string[];

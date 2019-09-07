@@ -71,8 +71,7 @@ function commonStyleLoader (test: RegExp, name?: string, options?: object): Rule
 
 export default function generateConfig (config: FileConfig | null, mode: 'development' | 'production' | 'none'): Configuration[] {
   const options = Object.assign({}, defaultConfig, config)
-  const isSingleProject = !Array.isArray(options.projects)
-  const projects = isSingleProject ? [<string>options.projects] : <string[]>options.projects
+  const projects = options.projects || [options.srcDir]
   const copyDirs = options.copyDirs ? (Array.isArray(options.copyDirs) ? options.copyDirs : [options.copyDirs]) : []
   return projects.map<Configuration>(project => {
     let ret: Configuration = {
@@ -83,7 +82,7 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
         app: path.resolve(options.srcDir, project, 'app.js')
       },
       output: {
-        path: path.resolve(currentDir, `${options.outpuDir}${isSingleProject ? '' : `/${project}`}`),
+        path: path.resolve(currentDir, `${options.outpuDir}${options.projects ? `/${project}` : ''}`),
         filename: '[name].js',
         publicPath: '/',
         globalObject: 'wx',
@@ -174,9 +173,10 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
         new FriendlyErrorsWebpackPlugin(),
         new ProgressPlugin(),
         new CopyWebpackPlugin(copyDirs.map(dir => {
+          const subdir = options.projects ? project : ''
           return {
-            from: path.resolve(options.srcDir, isSingleProject ? '' : project, dir),
-            to: path.resolve(options.outpuDir, isSingleProject ? '' : project),
+            from: path.resolve(options.srcDir, subdir, dir),
+            to: path.resolve(options.outpuDir, subdir),
             toType: 'dir',
             ignore: [
               '.DS_Store'

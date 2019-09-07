@@ -70,8 +70,7 @@ function commonStyleLoader(test, name, options) {
 }
 function generateConfig(config, mode) {
     var options = Object.assign({}, defaultConfig, config);
-    var isSingleProject = !Array.isArray(options.projects);
-    var projects = isSingleProject ? [options.projects] : options.projects;
+    var projects = options.projects || [options.srcDir];
     var copyDirs = options.copyDirs ? (Array.isArray(options.copyDirs) ? options.copyDirs : [options.copyDirs]) : [];
     return projects.map(function (project) {
         var ret = {
@@ -82,7 +81,7 @@ function generateConfig(config, mode) {
                 app: path_1.default.resolve(options.srcDir, project, 'app.js')
             },
             output: {
-                path: path_1.default.resolve(currentDir, "" + options.outpuDir + (isSingleProject ? '' : "/" + project)),
+                path: path_1.default.resolve(currentDir, "" + options.outpuDir + (options.projects ? "/" + project : '')),
                 filename: '[name].js',
                 publicPath: '/',
                 globalObject: 'wx',
@@ -173,9 +172,10 @@ function generateConfig(config, mode) {
                 new friendly_errors_webpack_plugin_1.default(),
                 new webpack_1.ProgressPlugin(),
                 new copy_webpack_plugin_1.default(copyDirs.map(function (dir) {
+                    var subdir = options.projects ? project : '';
                     return {
-                        from: path_1.default.resolve(options.srcDir, isSingleProject ? '' : project, dir),
-                        to: path_1.default.resolve(options.outpuDir, isSingleProject ? '' : project),
+                        from: path_1.default.resolve(options.srcDir, subdir, dir),
+                        to: path_1.default.resolve(options.outpuDir, subdir),
                         toType: 'dir',
                         ignore: [
                             '.DS_Store'
