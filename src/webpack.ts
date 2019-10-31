@@ -75,6 +75,7 @@ export default function generateConfig (config: FileConfig | null, mode: 'develo
   const copyDirs = options.copyDirs ? (Array.isArray(options.copyDirs) ? options.copyDirs : [options.copyDirs]) : []
   return projects.map<Configuration>(project => {
     let ret: Configuration = {
+      cache: mode !== 'production',
       mode: options.mode || mode,
       context: currentDir,
       devtool: false,
