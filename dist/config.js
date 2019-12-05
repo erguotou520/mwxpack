@@ -39,20 +39,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var joi_1 = __importDefault(require("@hapi/joi"));
+// const currentDir = process.cwd()
 var ConfigSchema = joi_1.default.object().keys({
+    // 是否是mpx
+    isMpx: joi_1.default.bool(),
+    // 是否使用package.json中的description字段作为本次上传的说明
+    useDescription: joi_1.default.bool(),
     mode: joi_1.default.string().allow(['development', 'production', 'none']),
     projects: joi_1.default.array().items(joi_1.default.string().required()),
     srcDir: joi_1.default.string(),
     outputDir: joi_1.default.string(),
-    copyDirs: [
-        joi_1.default.string(),
-        joi_1.default.array().items(joi_1.default.string().required()),
-    ],
-    webpackConfiguration: [
-        joi_1.default.object(),
-        joi_1.default.func()
-    ]
+    copyDirs: [joi_1.default.string(), joi_1.default.array().items(joi_1.default.string().required())],
+    webpackConfiguration: [joi_1.default.object(), joi_1.default.func()]
 });
+exports.defaultConfig = {
+    srcDir: 'src',
+    _isSingle: true,
+    projects: [''],
+    outputDir: 'dist',
+    copyDirs: ['static'],
+    webpackConfiguration: {}
+};
 function validate(config) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

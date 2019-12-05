@@ -1,20 +1,27 @@
 import minimist, { ParsedArgs } from 'minimist'
 import path from 'path'
 import { existsSync } from 'fs'
+import webpack, { Configuration, MultiCompiler, Stats } from 'webpack'
 import chalk from 'chalk'
 import { error, warn } from './utils'
 import generateConfig from './webpack'
-import { validate, FileConfig } from './config'
-import webpack, { Configuration, MultiCompiler, Stats } from 'webpack'
+import { validate, FileConfig, defaultConfig } from './config'
+import deploy from './deploy'
+
+interface LoadConfigurationArgs {
+  config: FileConfig
+  configuration: Configuration[]
+}
 
 const usageString = `usage:
 mwxpack serve [-c mwxpack.config.js]
 mwxpack build [-c mwxpack.config.js]
-mwxpack inspect [-c mwxpack.config.js] > config.js`
+mwxpack inspect [-c mwxpack.config.js] > config.js
+mwxpack deploy [-v 1.0.0] [-d description] [-c mwxpack.config.js]`
 
-const services = ['serve', 'build', 'inspect']
+const services = ['serve', 'build', 'inspect', 'deploy']
 
-export function parseArg (_args: string[]): { service: string, args: ParsedArgs} {
+export function parseArg(_args: string[]): { service: string; args: ParsedArgs } {
   // 空命令
   if (!_args.length) {
     error(usageString)
@@ -32,9 +39,9 @@ export function parseArg (_args: string[]): { service: string, args: ParsedArgs}
   return { service, args }
 }
 
-export async function loadConfiguration (args: ParsedArgs, service: string): Promise<Configuration[]> {
+export async function loadConfiguration(args: ParsedArgs, service: string): Promise<LoadConfigurationArgs> {
   // 配置
-  let config: FileConfig | null = null
+  let config: FileConfig = defaultConfig
   const configFilePath = args.c || 'mwxpack.config.js'
   const configFile = path.resolve(process.cwd(), configFilePath)
   // 配置文件
@@ -56,7 +63,11 @@ export async function loadConfiguration (args: ParsedArgs, service: string): Pro
     }
     try {
       // 验证
-      config = await validate(fileConfig)
+      const _config = await validate(fileConfig)
+      // 判断是否是单项目模式
+      config._isSingle = !(config.projects && config.projects.length)
+      // 合并默认配置
+      config = Object.assign({}, defaultConfig, _config)
     } catch (err) {
       error('配置文件错误')
       console.error(err)
@@ -68,21 +79,26 @@ export async function loadConfiguration (args: ParsedArgs, service: string): Pro
       process.exit(-1)
     }
   }
-  return generateConfig(config, service === 'build' ? 'production' : 'development')
+  return {
+    config,
+    configuration: generateConfig(config, service === 'build' ? 'production' : 'development')
+  }
 }
 
-function logStats (stats: Stats): void {
-  process.stdout.write(stats.toString({
-    colors: true,
-    modules: false,
-    children: false,
-    chunks: false,
-    chunkModules: false,
-    entrypoints: false
-  }) + '\n\n')
+function logStats(stats: Stats): void {
+  process.stdout.write(
+    stats.toString({
+      colors: true,
+      modules: false,
+      children: false,
+      chunks: false,
+      chunkModules: false,
+      entrypoints: false
+    }) + '\n\n'
+  )
 }
 
-function webpackHandler (err: Error, stats: any, isProd: boolean = true) {
+function webpackHandler(err: Error, stats: any, isProd: boolean = true) {
   if (err) {
     throw err
   }
@@ -103,23 +119,28 @@ function webpackHandler (err: Error, stats: any, isProd: boolean = true) {
   console.log(chalk.cyan('  Build complete.\n'))
 }
 
-function devWebpackHandler (err: Error, stats: any) {
+function devWebpackHandler(err: Error, stats: any) {
   return webpackHandler(err, stats, false)
 }
 
-export default async function run (_args: string[]) {
+export default async function run(_args: string[]) {
   const { service, args } = parseArg(_args)
-  const webpackConfiguration = await loadConfiguration(args, service)
+  const { config, configuration } = await loadConfiguration(args, service)
   if (service === 'inspect') {
-    return console.log(webpackConfiguration)
+    return console.log(configuration)
   }
-  const compiler: MultiCompiler = webpack(webpackConfiguration)
+  const compiler: MultiCompiler = webpack(configuration)
   if (service === 'build') {
     compiler.run(webpackHandler)
-  } else {
-    compiler.watch({
-      aggregateTimeout: 300,
-      poll: undefined
-    }, devWebpackHandler)
+  } else if (service === 'serve') {
+    compiler.watch(
+      {
+        aggregateTimeout: 300,
+        poll: undefined
+      },
+      devWebpackHandler
+    )
+  } else if (service === 'deploy') {
+    deploy(config, args)
   }
 }

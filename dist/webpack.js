@@ -11,11 +11,7 @@ var copy_webpack_plugin_1 = __importDefault(require("copy-webpack-plugin"));
 var webpack_bundle_analyzer_1 = require("webpack-bundle-analyzer");
 var webpack_merge_1 = __importDefault(require("webpack-merge"));
 var currentDir = process.cwd();
-var defaultConfig = {
-    srcDir: path_1.default.resolve(currentDir, 'src'),
-    outpuDir: path_1.default.resolve(currentDir, 'dist'),
-    copyDirs: []
-};
+// 通用资源加载器
 function commonAssetLoader(test, prefix) {
     return {
         test: test,
@@ -35,6 +31,7 @@ function commonAssetLoader(test, prefix) {
         ]
     };
 }
+// 通用样式加载器
 function commonStyleLoader(test, name, options) {
     var ret = {
         test: test,
@@ -69,44 +66,36 @@ function commonStyleLoader(test, name, options) {
     return ret;
 }
 function generateConfig(config, mode) {
-    var options = Object.assign({}, defaultConfig, config);
-    var projects = options.projects || [options.srcDir];
-    var copyDirs = options.copyDirs ? (Array.isArray(options.copyDirs) ? options.copyDirs : [options.copyDirs]) : [];
-    return projects.map(function (project) {
+    // 全局src目录
+    var srcPath = path_1.default.resolve(currentDir, config.srcDir);
+    // mpx专用
+    var isMpx = config ? config.isMpx : false;
+    // 默认复制的目录
+    var copyDirs = config.copyDirs ? (Array.isArray(config.copyDirs) ? config.copyDirs : [config.copyDirs]) : [];
+    return config.projects.map(function (project) {
         var ret = {
             cache: mode !== 'production',
-            mode: options.mode || mode,
+            mode: config.mode || mode,
             context: currentDir,
             devtool: false,
             entry: {
-                app: path_1.default.resolve(options.srcDir, project, 'app.js')
+                app: path_1.default.resolve(srcPath, project, isMpx ? 'app.mpx' : 'app.js')
             },
             output: {
-                path: path_1.default.resolve(currentDir, "" + options.outpuDir + (options.projects ? "/" + project : '')),
+                path: path_1.default.resolve(currentDir, config.outputDir, project),
                 filename: '[name].js',
                 publicPath: '/',
-                globalObject: 'wx',
+                globalObject: 'wx'
             },
             resolve: {
                 alias: {
-                    '@': defaultConfig.srcDir
+                    '@': srcPath
                 },
-                extensions: [
-                    '.mjs',
-                    '.js',
-                    '.json'
-                ],
-                modules: [
-                    'node_modules',
-                    path_1.default.resolve(currentDir, 'node_modules')
-                ]
+                extensions: ['.mjs', '.js', '.json'],
+                modules: ['node_modules', path_1.default.resolve(currentDir, 'node_modules')]
             },
             resolveLoader: {
-                modules: [
-                    'node_modules',
-                    path_1.default.resolve(__dirname, '../node_modules'),
-                    path_1.default.resolve(currentDir, 'node_modules')
-                ]
+                modules: ['node_modules', path_1.default.resolve(__dirname, '../node_modules'), path_1.default.resolve(currentDir, 'node_modules')]
             },
             devServer: {
                 writeToDisk: true
@@ -117,16 +106,12 @@ function generateConfig(config, mode) {
                     {
                         enforce: 'pre',
                         test: /\.m?js$/,
-                        exclude: [
-                            /node_modules/
-                        ],
+                        include: [srcPath],
                         use: [
                             {
                                 loader: 'eslint-loader',
                                 options: {
-                                    extensions: [
-                                        '.js'
-                                    ],
+                                    extensions: ['.js'],
                                     emitWarning: true,
                                     emitError: false
                                 }
@@ -136,9 +121,7 @@ function generateConfig(config, mode) {
                     // js loader
                     {
                         test: /\.m?js$/,
-                        include: [
-                            path_1.default.resolve(options.srcDir)
-                        ],
+                        include: [srcPath],
                         use: ['babel-loader']
                     },
                     // json loader
@@ -162,7 +145,7 @@ function generateConfig(config, mode) {
                     // less loader
                     commonStyleLoader(/\.less$/, 'less'),
                     // stylus loader
-                    commonStyleLoader(/\.styl(us)?$/, 'stylus', { preferPathResolver: 'webpack' }),
+                    commonStyleLoader(/\.styl(us)?$/, 'stylus', { preferPathResolver: 'webpack' })
                 ]
             },
             plugins: [
@@ -173,18 +156,69 @@ function generateConfig(config, mode) {
                 new friendly_errors_webpack_plugin_1.default(),
                 new webpack_1.ProgressPlugin(),
                 new copy_webpack_plugin_1.default(copyDirs.map(function (dir) {
-                    var subdir = options.projects ? project : '';
                     return {
-                        from: path_1.default.resolve(options.srcDir, subdir, dir),
-                        to: path_1.default.resolve(options.outpuDir, subdir),
+                        from: path_1.default.resolve(srcPath, project, dir),
+                        to: path_1.default.resolve(config.outputDir, project),
                         toType: 'dir',
-                        ignore: [
-                            '.DS_Store'
-                        ]
+                        ignore: ['.DS_Store']
                     };
                 }))
             ]
         };
+        // mpx专用
+        if (isMpx) {
+            var MpxWebpackPlugin = require('@mpxjs/webpack-plugin');
+            ret = webpack_merge_1.default(ret, {
+                resolve: {
+                    extensions: ['.mpx']
+                },
+                module: {
+                    rules: [
+                        {
+                            // mpx eslint
+                            test: /\.mpx$/,
+                            loader: 'eslint-loader',
+                            enforce: 'pre',
+                            include: [srcPath]
+                        },
+                        {
+                            // mpx babel
+                            test: /\.mpx$/,
+                            include: [srcPath],
+                            use: MpxWebpackPlugin.loader({
+                                transRpx: {
+                                    mode: 'only',
+                                    comment: 'use rpx',
+                                    include: srcPath
+                                }
+                            })
+                        },
+                        {
+                            // mpxjs/core babel
+                            test: /\.m?js$/,
+                            include: [path_1.default.resolve(currentDir, 'node_modules/@mpxjs/core')],
+                            use: 'babel-loader'
+                        },
+                        {
+                            // wxs
+                            test: /\.(wxs|qs|sjs|filter\.js)$/,
+                            include: [srcPath],
+                            loader: MpxWebpackPlugin.wxsPreLoader(),
+                            enforce: 'pre'
+                        },
+                        {
+                            test: /\.(png|jpe?g|gif|svg)$/,
+                            include: [srcPath],
+                            loader: MpxWebpackPlugin.fileLoader({
+                                name: 'img/[name].[ext]'
+                            })
+                        }
+                    ]
+                },
+                plugins: [new MpxWebpackPlugin({ mode: 'wx', writeMode: 'changed' })]
+            });
+        }
+        // 构建报告
         if (process.env.npm_config_report && ret.plugins) {
             ret.plugins.push(new webpack_bundle_analyzer_1.BundleAnalyzerPlugin({
                 logLevel: 'warn',
@@ -192,6 +226,7 @@ function generateConfig(config, mode) {
                 analyzerMode: 'static'
             }));
         }
+        // 合并项目自定义的配置
         if (config && config.webpackConfiguration) {
             var customWebpackConfiguration = config.webpackConfiguration;
             if (typeof customWebpackConfiguration === 'function') {

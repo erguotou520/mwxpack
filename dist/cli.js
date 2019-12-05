@@ -41,13 +41,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var minimist_1 = __importDefault(require("minimist"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
+var webpack_1 = __importDefault(require("webpack"));
 var chalk_1 = __importDefault(require("chalk"));
 var utils_1 = require("./utils");
-var webpack_1 = __importDefault(require("./webpack"));
+var webpack_2 = __importDefault(require("./webpack"));
 var config_1 = require("./config");
-var webpack_2 = __importDefault(require("webpack"));
-var usageString = "usage:\nmwxpack serve [-c mwxpack.config.js]\nmwxpack build [-c mwxpack.config.js]\nmwxpack inspect [-c mwxpack.config.js] > config.js";
-var services = ['serve', 'build', 'inspect'];
+var deploy_1 = __importDefault(require("./deploy"));
+var usageString = "usage:\nmwxpack serve [-c mwxpack.config.js]\nmwxpack build [-c mwxpack.config.js]\nmwxpack inspect [-c mwxpack.config.js] > config.js\nmwxpack deploy [-v 1.0.0] [-d description] [-c mwxpack.config.js]";
+var services = ['serve', 'build', 'inspect', 'deploy'];
 function parseArg(_args) {
     // 空命令
     if (!_args.length) {
@@ -68,11 +69,11 @@ function parseArg(_args) {
 exports.parseArg = parseArg;
 function loadConfiguration(args, service) {
     return __awaiter(this, void 0, void 0, function () {
-        var config, configFilePath, configFile, fileConfig, err_1;
+        var config, configFilePath, configFile, fileConfig, _config, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    config = null;
+                    config = config_1.defaultConfig;
                     configFilePath = args.c || 'mwxpack.config.js';
                     configFile = path_1.default.resolve(process.cwd(), configFilePath);
                     if (!fs_1.existsSync(configFile)) return [3 /*break*/, 5];
@@ -95,10 +96,15 @@ function loadConfiguration(args, service) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, config_1.validate(fileConfig)];
+                    return [4 /*yield*/, config_1.validate(fileConfig)
+                        // 判断是否是单项目模式
+                    ];
                 case 2:
-                    // 验证
-                    config = _a.sent();
+                    _config = _a.sent();
+                    // 判断是否是单项目模式
+                    config._isSingle = !(config.projects && config.projects.length);
+                    // 合并默认配置
+                    config = Object.assign({}, config_1.defaultConfig, _config);
                     return [3 /*break*/, 4];
                 case 3:
                     err_1 = _a.sent();
@@ -113,7 +119,10 @@ function loadConfiguration(args, service) {
                         process.exit(-1);
                     }
                     _a.label = 6;
-                case 6: return [2 /*return*/, webpack_1.default(config, service === 'build' ? 'production' : 'development')];
+                case 6: return [2 /*return*/, {
+                        config: config,
+                        configuration: webpack_2.default(config, service === 'build' ? 'production' : 'development')
+                    }];
             }
         });
     });
@@ -156,26 +165,29 @@ function devWebpackHandler(err, stats) {
 }
 function run(_args) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, service, args, webpackConfiguration, compiler;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, service, args, _b, config, configuration, compiler;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     _a = parseArg(_args), service = _a.service, args = _a.args;
                     return [4 /*yield*/, loadConfiguration(args, service)];
                 case 1:
-                    webpackConfiguration = _b.sent();
+                    _b = _c.sent(), config = _b.config, configuration = _b.configuration;
                     if (service === 'inspect') {
-                        return [2 /*return*/, console.log(webpackConfiguration)];
+                        return [2 /*return*/, console.log(configuration)];
                     }
-                    compiler = webpack_2.default(webpackConfiguration);
+                    compiler = webpack_1.default(configuration);
                     if (service === 'build') {
                         compiler.run(webpackHandler);
                     }
-                    else {
+                    else if (service === 'serve') {
                         compiler.watch({
                             aggregateTimeout: 300,
                             poll: undefined
                         }, devWebpackHandler);
+                    }
+                    else if (service === 'deploy') {
+                        deploy_1.default(config, args);
                     }
                     return [2 /*return*/];
             }
