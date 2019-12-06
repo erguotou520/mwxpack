@@ -67,15 +67,18 @@ export async function doDeploy(args: DeployArgs) {
   if (args.output) {
     spawnArgs.push(...['--upload-info-output', args.output])
   }
-  console.log(`${pwd}\n${cliPath} ${spawnArgs.join(' ')}`)
+  // console.log(`${pwd}\n${cliPath} ${spawnArgs.join(' ')}`)
   return new Promise((resolve, reject) => {
     const child = spawn(cliPath, spawnArgs, {
       cwd: pwd,
-      stdio: 'pipe'
+      stdio: 'inherit'
     })
-    child.on('message', console.log)
-    child.once('close', resolve)
-    child.once('error', reject)
+
+    child.on('close', code => {
+      if (code) {
+        reject(code)
+      } else resolve()
+    })
   })
 }
 

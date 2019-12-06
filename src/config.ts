@@ -5,8 +5,6 @@ import { Configuration } from 'webpack'
 // const currentDir = process.cwd()
 
 const ConfigSchema = Joi.object().keys({
-  // 是否是mpx
-  isMpx: Joi.bool(),
   // 是否使用package.json中的description字段作为本次上传的说明
   useDescription: Joi.bool(),
   mode: Joi.string().allow(['development', 'production', 'none']),
@@ -18,7 +16,6 @@ const ConfigSchema = Joi.object().keys({
 })
 
 export interface FileConfig {
-  isMpx?: boolean
   useDescription?: boolean
   mode?: 'development' | 'production' | 'none'
   projects: string[]

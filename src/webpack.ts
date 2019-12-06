@@ -71,8 +71,8 @@ export default function generateConfig(
 ): Configuration[] {
   // 全局src目录
   const srcPath = path.resolve(currentDir, config.srcDir)
-  // mpx专用
-  const isMpx = config ? config.isMpx : false
+  // mpx专用，默认为true
+  const isMpx = process.env.MPX_ENABLE || true
   // 默认复制的目录
   const copyDirs = config.copyDirs ? (Array.isArray(config.copyDirs) ? config.copyDirs : [config.copyDirs]) : []
   return config.projects.map<Configuration>(project => {

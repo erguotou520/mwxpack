@@ -2,13 +2,11 @@
 
 ## 用法
 
-先在项目根目录创建`mwxpack.config.js`，内容如下：
+在项目根目录创建`mwxpack.config.js`，内容如下：
 
 ```js
 // const path = require('path')
 module.exports = {
-  // 是否是mpx进行开发的，默认false
-  isMpx: true,
   // 源码目录位置
   srcDir: './src',
   // 打包后的目录位置
@@ -51,3 +49,9 @@ mwxpack build
 # 参数-o可以将上传的信息输出到指定路径
 mwxpack deploy [-v 1.0.0] [-d description] [-o /path/to/output]
 ```
+
+## 环境变量
+
+- MPX_ENABLE 是否开启 mpx 支持，默认 true
+- WECHAT_MINAPP_DEVTOOL_PATH 自定义微信开发者工具的安装目录
+- npm_config_report 是否开启构建报告，可以通过--report 传递
