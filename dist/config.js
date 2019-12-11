@@ -41,8 +41,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var joi_1 = __importDefault(require("@hapi/joi"));
 // const currentDir = process.cwd()
 var ConfigSchema = joi_1.default.object().keys({
-    // 是否是mpx
-    isMpx: joi_1.default.bool(),
     // 是否使用package.json中的description字段作为本次上传的说明
     useDescription: joi_1.default.bool(),
     mode: joi_1.default.string().allow(['development', 'production', 'none']),

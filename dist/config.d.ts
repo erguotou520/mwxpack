@@ -1,7 +1,6 @@
 /// <reference types="webpack-dev-server" />
 import { Configuration } from 'webpack';
 export interface FileConfig {
-    isMpx?: boolean;
     useDescription?: boolean;
     mode?: 'development' | 'production' | 'none';
     projects: string[];

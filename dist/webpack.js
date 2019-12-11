@@ -68,8 +68,8 @@ function commonStyleLoader(test, name, options) {
 function generateConfig(config, mode) {
     // 全局src目录
     var srcPath = path_1.default.resolve(currentDir, config.srcDir);
-    // mpx专用
-    var isMpx = config ? config.isMpx : false;
+    // mpx专用，默认为true
+    var isMpx = process.env.MPX_ENABLE || true;
     // 默认复制的目录
     var copyDirs = config.copyDirs ? (Array.isArray(config.copyDirs) ? config.copyDirs : [config.copyDirs]) : [];
     return config.projects.map(function (project) {
