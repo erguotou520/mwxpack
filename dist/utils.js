@@ -4,6 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var chalk_1 = __importDefault(require("chalk"));
+function debug(str) {
+    console.log(chalk_1.default.grey(str));
+}
+exports.debug = debug;
+function log(str) {
+    console.log(chalk_1.default.blue(str));
+}
+exports.log = log;
 function error(str) {
     console.log(chalk_1.default.red(str));
 }

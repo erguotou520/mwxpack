@@ -46,9 +46,9 @@ var chalk_1 = __importDefault(require("chalk"));
 var utils_1 = require("./utils");
 var webpack_2 = __importDefault(require("./webpack"));
 var config_1 = require("./config");
-var deploy_1 = __importDefault(require("./deploy"));
-var usageString = "usage:\nmwxpack serve [-c mwxpack.config.js]\nmwxpack build [-c mwxpack.config.js]\nmwxpack inspect [-c mwxpack.config.js] > config.js\nmwxpack deploy [-v 1.0.0] [-d description] [-c mwxpack.config.js]";
-var services = ['serve', 'build', 'inspect', 'deploy'];
+var upload_1 = __importDefault(require("./upload"));
+var usageString = "usage:\nmwxpack serve [-c mwxpack.config.js]\nmwxpack build [-c mwxpack.config.js]\nmwxpack inspect [-c mwxpack.config.js] > config.js\nmwxpack upload [-v 1.0.0] [-d description] [-c mwxpack.config.js]";
+var services = ['serve', 'build', 'inspect', 'upload'];
 function parseArg(_args) {
     // 空命令
     if (!_args.length) {
@@ -186,8 +186,8 @@ function run(_args) {
                             poll: undefined
                         }, devWebpackHandler);
                     }
-                    else if (service === 'deploy') {
-                        deploy_1.default(config, args);
+                    else if (service === 'upload') {
+                        upload_1.default(config, args);
                     }
                     return [2 /*return*/];
             }
