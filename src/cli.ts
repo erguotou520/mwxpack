@@ -6,7 +6,7 @@ import chalk from 'chalk'
 import { error, warn } from './utils'
 import generateConfig from './webpack'
 import { validate, FileConfig, defaultConfig } from './config'
-import deploy from './deploy'
+import upload from './upload'
 
 interface LoadConfigurationArgs {
   config: FileConfig
@@ -17,9 +17,9 @@ const usageString = `usage:
 mwxpack serve [-c mwxpack.config.js]
 mwxpack build [-c mwxpack.config.js]
 mwxpack inspect [-c mwxpack.config.js] > config.js
-mwxpack deploy [-v 1.0.0] [-d description] [-c mwxpack.config.js]`
+mwxpack upload [-v 1.0.0] [-d description] [-c mwxpack.config.js]`
 
-const services = ['serve', 'build', 'inspect', 'deploy']
+const services = ['serve', 'build', 'inspect', 'upload']
 
 export function parseArg(_args: string[]): { service: string; args: ParsedArgs } {
   // 空命令
@@ -140,7 +140,7 @@ export default async function run(_args: string[]) {
       },
       devWebpackHandler
     )
-  } else if (service === 'deploy') {
-    deploy(config, args)
+  } else if (service === 'upload') {
+    upload(config, args)
   }
 }

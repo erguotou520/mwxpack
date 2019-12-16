@@ -2,10 +2,11 @@ import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
 import { spawn } from 'child_process'
-import { FileConfig } from './config'
 import { ParsedArgs } from 'minimist'
+import { FileConfig } from './config'
+import { log, debug } from './utils'
 
-interface DeployArgs {
+interface UploadArgs {
   projectPath: string
   version: string
   description?: string
@@ -54,7 +55,7 @@ export async function getCliPath() {
 }
 
 // 执行上传任务
-export async function doDeploy(args: DeployArgs) {
+export async function doUpload(args: UploadArgs) {
   if (!cliPath) {
     await getCliPath()
   }
@@ -67,7 +68,8 @@ export async function doDeploy(args: DeployArgs) {
   if (args.output) {
     spawnArgs.push(...['--upload-info-output', args.output])
   }
-  // console.log(`${pwd}\n${cliPath} ${spawnArgs.join(' ')}`)
+  debug(`${cliPath} ${spawnArgs.join(' ')}`)
+  log(`正在上传${args.version}版本`)
   return new Promise((resolve, reject) => {
     const child = spawn(cliPath, spawnArgs, {
       cwd: pwd,
@@ -94,7 +96,7 @@ async function getPkgInfo(folder: string) {
 }
 
 // 根据配置和环境变量取执行上传
-export default async function deploy(config: FileConfig, args: ParsedArgs) {
+export default async function upload(config: FileConfig, args: ParsedArgs) {
   // 每个项目单独上传
   for (const project of config.projects || []) {
     // 项目路径
@@ -126,7 +128,7 @@ export default async function deploy(config: FileConfig, args: ParsedArgs) {
       }
     }
     try {
-      await doDeploy({
+      await doUpload({
         projectPath,
         version,
         description,
