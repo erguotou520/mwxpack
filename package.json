@@ -1,6 +1,6 @@
 {
   "name": "mwxpack",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "webpack configuration for weixin miapp",
   "main": "bin/mwxpack.js",
   "author": "erguotou525@gmail.com",
@@ -35,12 +35,12 @@
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@hapi/joi": "^15.1.1",
-    "@mpxjs/webpack-plugin": "^2.2.46",
+    "@mpxjs/webpack-plugin": "^2.4.6",
     "babel-loader": "^8.0.6",
     "cache-loader": "^4.1.0",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "chalk": "^2.4.2",
-    "copy-webpack-plugin": "^5.0.4",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
     "eslint": "^6.2.1",
@@ -54,6 +54,10 @@
     "webpack-bundle-analyzer": "^3.4.1",
     "webpack-dev-server": "^3.8.0",
     "webpack-merge": "^4.2.1"
+  },
+  "resolutions": {
+    "js-yaml": "3.13.1",
+    "serialize-javascript": "2.1.2"
   },
   "peerDependencies": {},
   "peerDependenciesMeta": {
