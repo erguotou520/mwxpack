@@ -136,6 +136,7 @@ export default async function upload(config: FileConfig, args: ParsedArgs) {
       })
     } catch (error) {
       console.error(error)
+      process.exit(-1)
     }
   }
 }
