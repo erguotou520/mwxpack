@@ -121,7 +121,7 @@ function loadConfiguration(args, service) {
                     _a.label = 6;
                 case 6: return [2 /*return*/, {
                         config: config,
-                        configuration: webpack_2.default(config, service === 'build' ? 'production' : 'development')
+                        configuration: webpack_2.default(config, service === 'build' ? 'production' : 'development', service !== 'build')
                     }];
             }
         });

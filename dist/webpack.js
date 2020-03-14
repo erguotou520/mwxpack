@@ -65,16 +65,22 @@ function commonStyleLoader(test, name, options) {
     }
     return ret;
 }
-function generateConfig(config, mode) {
+// 获取项目的相对路径
+function resolveCurrentPath(_path) {
+    return path_1.default.resolve(currentDir, _path);
+}
+function generateConfig(config, mode, watch) {
     // 全局src目录
-    var srcPath = path_1.default.resolve(currentDir, config.srcDir);
+    var srcPath = resolveCurrentPath(config.srcDir);
     // mpx专用，默认为true
     var isMpx = process.env.MPX_ENABLE || true;
     // 默认复制的目录
     var copyDirs = config.copyDirs ? (Array.isArray(config.copyDirs) ? config.copyDirs : [config.copyDirs]) : [];
     return config.projects.map(function (project) {
         var ret = {
-            cache: mode !== 'production',
+            cache: watch,
+            // cache: mode !== 'production',
+            // 优先使用配置文件的全局配置
             mode: config.mode || mode,
             context: currentDir,
             devtool: false,
@@ -91,8 +97,8 @@ function generateConfig(config, mode) {
                 alias: {
                     '@': srcPath
                 },
-                extensions: ['.mjs', '.js', '.json'],
-                modules: ['node_modules', path_1.default.resolve(currentDir, 'node_modules')]
+                extensions: ['.wxml', '.js', '.json'],
+                modules: ['node_modules', resolveCurrentPath('node_modules')]
             },
             resolveLoader: {
                 modules: ['node_modules', path_1.default.resolve(__dirname, '../node_modules'), path_1.default.resolve(currentDir, 'node_modules')]
@@ -105,22 +111,16 @@ function generateConfig(config, mode) {
                     // pre js loader
                     {
                         enforce: 'pre',
-                        test: /\.m?js$/,
+                        test: /\.(js|mpx)$/,
                         include: [srcPath],
-                        use: [
-                            {
-                                loader: 'eslint-loader',
-                                options: {
-                                    extensions: ['.js'],
-                                    emitWarning: true,
-                                    emitError: false
-                                }
-                            }
-                        ]
+                        loader: 'eslint-loader',
+                        options: {
+                            formatter: require('eslint-friendly-formatter')
+                        }
                     },
                     // js loader
                     {
-                        test: /\.m?js$/,
+                        test: /\.js$/,
                         include: [srcPath],
                         use: ['babel-loader']
                     },
@@ -163,7 +163,10 @@ function generateConfig(config, mode) {
                         ignore: ['.DS_Store']
                     };
                 }))
-            ]
+            ],
+            performance: {
+                hints: false
+            }
         };
         // mpx专用
         if (isMpx) {
@@ -174,13 +177,6 @@ function generateConfig(config, mode) {
                 },
                 module: {
                     rules: [
-                        {
-                            // mpx eslint
-                            test: /\.mpx$/,
-                            loader: 'eslint-loader',
-                            enforce: 'pre',
-                            include: [srcPath]
-                        },
                         {
                             // mpx babel
                             test: /\.mpx$/,
@@ -195,27 +191,32 @@ function generateConfig(config, mode) {
                         },
                         {
                             // mpxjs/core babel
-                            test: /\.m?js$/,
-                            include: [path_1.default.resolve(currentDir, 'node_modules/@mpxjs/core')],
+                            test: /\.js$/,
+                            include: [resolveCurrentPath('test'), resolveCurrentPath('node_modules/@mpxjs/core')],
+                            exclude: [resolveCurrentPath('node_modules/@mpxjs/webpack-plugin')],
                             use: 'babel-loader'
                         },
                         {
                             // wxs
                             test: /\.(wxs|qs|sjs|filter\.js)$/,
-                            include: [srcPath],
+                            // include: [srcPath],
                             loader: MpxWebpackPlugin.wxsPreLoader(),
                             enforce: 'pre'
                         },
                         {
                             test: /\.(png|jpe?g|gif|svg)$/,
-                            include: [srcPath],
+                            // include: [srcPath],
                             loader: MpxWebpackPlugin.fileLoader({
                                 name: 'img/[name].[ext]'
                             })
                         }
                     ]
                 },
-                plugins: [new MpxWebpackPlugin({ mode: 'wx', writeMode: 'changed' })]
+                plugins: [
+                    new MpxWebpackPlugin({
+                        mode: 'wx', writeMode: 'changed'
+                    })
+                ]
             });
         }
         // 构建报告

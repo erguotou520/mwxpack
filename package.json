@@ -1,6 +1,6 @@
 {
   "name": "mwxpack",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "webpack configuration for weixin miapp",
   "main": "bin/mwxpack.js",
   "author": "erguotou525@gmail.com",
@@ -44,6 +44,7 @@
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
     "eslint": "^6.2.1",
+    "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.2.1",
     "file-loader": "^4.2.0",
     "friendly-errors-webpack-plugin": "^1.7.0",

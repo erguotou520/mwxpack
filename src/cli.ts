@@ -81,7 +81,9 @@ export async function loadConfiguration(args: ParsedArgs, service: string): Prom
   }
   return {
     config,
-    configuration: generateConfig(config, service === 'build' ? 'production' : 'development')
+    configuration: generateConfig(config,
+      service === 'build' ? 'production' : 'development',
+      service !== 'build')
   }
 }
 
