@@ -1,6 +1,6 @@
 {
   "name": "mwxpack",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "webpack configuration for weixin miapp",
   "main": "bin/mwxpack.js",
   "author": "erguotou525@gmail.com",
@@ -35,7 +35,7 @@
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@hapi/joi": "^15.1.1",
-    "@mpxjs/webpack-plugin": "^2.4.15",
+    "@mpxjs/webpack-plugin": "^2.5.2",
     "babel-loader": "^8.0.6",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "chalk": "^2.4.2",
