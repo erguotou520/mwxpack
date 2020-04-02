@@ -102,7 +102,7 @@ export default function generateConfig(
         alias: {
           '@': srcPath
         },
-        extensions: ['.wxml', '.js', '.json'],
+        extensions: ['.js', '.wxml'],
         modules: ['node_modules', resolveCurrentPath('node_modules')]
       },
       resolveLoader: {
@@ -199,7 +199,7 @@ export default function generateConfig(
             {
               // mpxjs/core babel
               test: /\.js$/,
-              include: [resolveCurrentPath('test'), resolveCurrentPath('node_modules/@mpxjs/core')],
+              include: [resolveCurrentPath('test'), resolveCurrentPath('node_modules/@mpxjs')],
               exclude: [resolveCurrentPath('node_modules/@mpxjs/webpack-plugin')],
               use: 'babel-loader'
             },
@@ -221,7 +221,7 @@ export default function generateConfig(
         },
         plugins: [
           new MpxWebpackPlugin({
-            mode: 'wx', writeMode: 'changed'
+            mode: config.platform || 'wx', writeMode: 'changed'
           })
         ]
       })

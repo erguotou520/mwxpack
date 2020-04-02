@@ -3,6 +3,7 @@ import { Configuration } from 'webpack';
 export interface FileConfig {
     useDescription?: boolean;
     mode?: 'development' | 'production' | 'none';
+    platform?: 'wx' | 'ali' | 'swan' | 'qq' | 'tt';
     projects: string[];
     _isSingle: boolean;
     srcDir: string;
